@@ -1,6 +1,5 @@
 {
   "include": ["env.d.ts", "src/**/main.ts", "src/**/Waterfall.vue"],
-  "exclude": ["src/components/BSInput.vue","src/App.vue"],
   "compilerOptions": {
     "types": ["vitest/importMeta"],
     "baseUrl": ".",
