@@ -2,6 +2,7 @@
 import { defineAsyncComponent, reactive, } from 'vue';
 import { Waterfall } from './main';
 import BSInput from './components/BSInput.vue';
+import { json } from 'stream/consumers';
 const c = Array.from<string>("0123456789ABCDEF")
 const d = () => c[(c.length * Math.random()) | 0]
 const _createItem = () => ({ id: crypto.randomUUID(), h: 3 + (Math.random() * 30) | 0, c: '#' + d() + d() + d() });
@@ -62,10 +63,10 @@ const settings = reactive({
         </div>
         <div class="m-5">
             <div class="alert alert-warning">演示工具</div>
-            <BSInput type="function" :value="_createItem" disabled>createItem</BSInput>
+            <BSInput type="text" :value="JSON.stringify(list[0])" disabled>list[0]</BSInput>
             <BSInput type="function" v-model="settings.itemModify">你可以调整演示item对象</BSInput>
             <BSInput type="text" v-model="settings.key1">item上的文字(大)</BSInput>
-            <BSInput type="text" v-model="settings.key2">item上的文字(小)</BSInput>
+            <BSInput type="text" v-model="settings.key2">item上的文字(小，可以是html)</BSInput>
             <div class="input-group">
                 <BSInput type="number" min="0" step="1" v-model="settings.addDelay">每</BSInput>
                 <BSInput type="number" min="0" step="1" v-model="settings.minAdd">毫秒增加</BSInput>
