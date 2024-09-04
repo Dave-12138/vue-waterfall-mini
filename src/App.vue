@@ -135,7 +135,7 @@ const settings = reactive({
 .waterfall-list {
     background-color: rgb(52, 66, 66);
     // margin: 2rem;
-    padding: 3rem 3rem 0rem;
+    padding: 3rem 3rem 1rem;
     box-sizing: border-box;
 }
 

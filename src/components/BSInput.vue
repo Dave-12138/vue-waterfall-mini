@@ -7,7 +7,7 @@ const isFunc = computed(() => props.type === 'function');
 const type = computed(() => isFunc.value ? 'text' : props.type);
 const text = computed({
     get() {
-        return value.value.toString();
+        return value.value?.toString();
     },
     set(t) {
         try {

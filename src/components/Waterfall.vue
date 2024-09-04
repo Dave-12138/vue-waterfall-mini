@@ -45,13 +45,13 @@ export default defineComponent({
   setup(props) {
     const wtfElement = ref<HTMLDivElement | null>(null);
     const wapperWidth = ref<number>(0);
-    const borderOffset = reactive({ left: 0, top: 0, bottom: 0 });
+    const borderOffset = reactive({ left: 0, top: 0, });
     useResizeObserver(wtfElement, ([entry]) => {
-      const { width, top, left, bottom } = entry.contentRect;
+      const { width, top, left } = entry.contentRect;
       borderOffset.left = left;
       borderOffset.top = top;
-      borderOffset.bottom = bottom;
       wapperWidth.value = width;
+      console.info(entry.contentRect.toJSON());
     })
     // 有几列(桶)
     const colCount = computed(() => Math.max(1, props.breakPoint(wapperWidth.value)));
@@ -90,7 +90,7 @@ export default defineComponent({
         itemPosList[index] = ({ x: minBuckIndex, y: bucketHeights[minBuckIndex] });
         bucketHeights[minBuckIndex] += itemHeight;
       })
-      wapperHeight.value = Math.max(...bucketHeights) + borderOffset.top + borderOffset.bottom;
+      wapperHeight.value = Math.max(...bucketHeights) + borderOffset.top;
       setTimeout(() => {
         props.list.forEach((e, i) => {
           listed[i] = props.rowKey(e);
@@ -184,11 +184,14 @@ export default defineComponent({
   }
 }
 
-.fade-in:not([before-render]) {
-  animation-name: fade-in;
-}
+*:not([before-render]) {
 
-.fade-up:not([before-render]) {
-  animation-name: fade-up;
+  &.fade-in {
+    animation-name: fade-in;
+  }
+
+  &.fade-up {
+    animation-name: fade-up;
+  }
 }
 </style>
