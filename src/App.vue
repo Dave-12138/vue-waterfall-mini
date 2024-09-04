@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import { defineAsyncComponent, reactive, } from 'vue';
+import { reactive, } from 'vue';
 import { Waterfall } from './main';
 import BSInput from './components/BSInput.vue';
-import { json } from 'stream/consumers';
 const c = Array.from<string>("0123456789ABCDEF")
 const d = () => c[(c.length * Math.random()) | 0]
 const _createItem = () => ({ id: crypto.randomUUID(), h: 3 + (Math.random() * 30) | 0, c: '#' + d() + d() + d() });

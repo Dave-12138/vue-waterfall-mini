@@ -1,11 +1,24 @@
 {
-  "files": [],
-  "references": [
-    {
-      "path": "./tsconfig.node.json"
-    },
-    {
-      "path": "./tsconfig.app.json"
-    }
-  ]
+  "include": ["env.d.ts", "src/**/main.ts", "src/**/Waterfall.vue"],
+  "exclude": ["src/components/BSInput.vue","src/App.vue"],
+  "compilerOptions": {
+    "types": ["vitest/importMeta"],
+    "baseUrl": ".",
+    "declaration": true,
+    "outDir": "dist",
+    "module": "ESNext",
+    "target": "es2016",
+    "lib": ["DOM", "ESNext"],
+    "strict": true,
+    "esModuleInterop": true,
+    "incremental": false,
+    "skipLibCheck": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "noUnusedLocals": true,
+    "strictNullChecks": true,
+    "forceConsistentCasingInFileNames": true,
+    "declarationDir": "dist/types",
+    "emitDeclarationOnly": true
+  }
 }

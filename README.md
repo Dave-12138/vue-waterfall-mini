@@ -3,7 +3,10 @@
 简单的vue3瀑布流组件，通过vue调整元素样式而非直接进行dom操作以获得最好的兼容性。
 
 ## 安装
-我没传 npm ，理论上我会打个包放到 github release 里，如果没有那就下载或 git clone 这个仓库然后自己 `npm i` 、 `npm run build` 吧。
+
+```cmd
+npm i vue-waterfall-mini
+```
 
 ## 使用例
 

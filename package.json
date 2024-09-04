@@ -1,13 +1,32 @@
 {
   "name": "vue-waterfall-mini",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "author": {
     "name": "Dave_12138",
     "email": "dave-12138@outlook.com",
     "url": "https://dave-12138.cn"
   },
-  "private": true,
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Dave-12138/vue-waterfall-mini"
+  },
+  "files": [
+    "dist",
+    "index.js",
+    "index.cjs"
+  ],
+  "exports": {
+    ".": {
+      "import": "./index.js",
+      "require": "./index.cjs"
+    },
+    "./style": "./dist/style.css",
+    "./style.css": "./dist/style.css"
+  },
+  "main": "index.cjs",
+  "module": "index.js",
+  "types": "dist/types/index.d.ts",
   "scripts": {
     "dev": "vite",
     "build": "run-p type-check \"build-only {@}\" --",
