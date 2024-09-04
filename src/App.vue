@@ -42,7 +42,12 @@ const settings = reactive({
     addDelay: 3000,
     minAdd: 1,
     maxAdd: 5,
-    maxCount: 20
+    maxCount: 20,
+    style: {
+        padding: "3rem",
+        backgroundColor: "rgb(52, 66, 66)",
+        boxSizing: "border-box"
+    }
 });
 </script>
 <template>
@@ -73,11 +78,18 @@ const settings = reactive({
                 <BSInput type="number" min="0" step="1" v-model="settings.maxCount">个新元素，直到个数达到</BSInput>
             </div>
             <button class="btn btn-outline-danger" @click="list.splice(0)">清空item</button>
+            <BSInput type="text" v-model="settings.style.padding">padding</BSInput>
+            <BSInput type="text" v-model="settings.style.backgroundColor">background-color</BSInput>
+            <BSInput type="text" v-model="settings.style.boxSizing" list="box-sizing">box-sizing</BSInput>
+            <datalist id="box-sizing">
+                <option value="border-box"></option>
+                <option value="content-box"></option>
+            </datalist>
         </div>
 
     </div>
     <div class=" container">
-        <Waterfall :list="list" #="{ item, index }" :="props">
+        <Waterfall :list="list" #="{ item, index }" :="props" :style="{ ...settings.style }">
             <div class="my-item" @click="list.splice(index, 1)" :style="{ backgroundColor: item.c }">
                 <div :style="{ height: item.h + 'rem' }">
                     <div>{{ item[settings.key1] }}</div>
@@ -130,13 +142,6 @@ const settings = reactive({
             }
         }
     }
-}
-
-.waterfall-list {
-    background-color: rgb(52, 66, 66);
-    // margin: 2rem;
-    padding: 3rem 3rem 1rem;
-    box-sizing: border-box;
 }
 
 @keyframes fade-rotate {
