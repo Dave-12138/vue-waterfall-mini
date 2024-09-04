@@ -22,6 +22,7 @@ if (target !== 'lib') {
 }
 // https://vitejs.dev/config/
 export default defineConfig({
+  base: "./",
   plugins: [
     vue(),
   ],

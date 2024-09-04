@@ -51,7 +51,6 @@ export default defineComponent({
       borderOffset.left = left;
       borderOffset.top = top;
       wapperWidth.value = width;
-      console.info(entry.contentRect.toJSON());
     })
     // 有几列(桶)
     const colCount = computed(() => Math.max(1, props.breakPoint(wapperWidth.value)));

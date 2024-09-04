@@ -1,6 +1,11 @@
 {
   "name": "vue-waterfall-mini",
-  "version": "0.0.0",
+  "version": "1.0.0",
+  "author": {
+    "name": "Dave_12138",
+    "email": "dave-12138@outlook.com",
+    "url": "https://dave-12138.cn"
+  },
   "private": true,
   "type": "module",
   "scripts": {
