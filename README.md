@@ -60,7 +60,7 @@ export default {
 -|-|-|-
 list|Array|[]|瀑布流中元素的集合，瀑布流依据它生成卡片列表
 `break-point` | `(wapperWidth: number) => number` | `w=>Math.floor(w/200)` |控制当瀑布流容器宽度为 `wapperWidth` （单位：px）时，瀑布流的列数的函数<br/>默认值下，容器每有 200px 宽则增加一列<br/>若希望容器宽度 > 992px 时呈现 3 列，否则呈现 1 列时可以使用 `w=>w>992?3:1`
-`row-key` | ` (element) => string \| number \| symbol` | `e => e.id ` |获取列表元素 `key` 的函数，默认获取字段 `id`<br/>**如果不能获取到唯一 key 会导致什么我也不知道**
+`row-key` | ` (element) => string \| number \| symbol` | `e => e.id ` |获取列表元素 `key` 的函数，默认获取字段 `id`<br/>**未能获取唯一key时自动使用数组下标作为识别符，这会导致动画效果些微抽搐**
 `transition` | `number` |300|瀑布流中卡片重新排列位置的“重排动画”持续时间，单位毫秒，理论上设为 0 就可以关闭重排动画了
 `join-duration` | `number` |300|新加入卡片的“加入动画”持续时间，单位毫秒
 `animate` | `string` |fade-in|新加入卡片的“加入动画”，传递的参数的同名 class 会被添加给卡片 <br/>组件预提供 fade-in 和 fade-up 两种动画

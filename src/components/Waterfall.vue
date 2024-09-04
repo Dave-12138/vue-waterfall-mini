@@ -1,5 +1,5 @@
 <script lang="ts">
-import { computed, defineComponent, nextTick, provide, reactive, ref, watch } from 'vue';
+import { computed, defineComponent, provide, reactive, ref, watch } from 'vue';
 import type { PropType } from 'vue';
 import { useDebounceFn, useResizeObserver } from "@vueuse/core";
 type ColCount = number;
@@ -15,10 +15,11 @@ interface CssItemPos extends Record<string, number> {
   '--x': number;
   '--y': number;
 }
+type Item = Record<string, any>;
 export default defineComponent({
   props: {
     list: {
-      type: Array as PropType<Record<string, any>[]>,
+      type: Array as PropType<Item[]>,
       default: () => []
     },
     breakPoint: {
@@ -26,7 +27,7 @@ export default defineComponent({
       default: (w: number) => Math.floor(w / 200)
     },
     rowKey: {
-      type: Function as PropType<(element: Record<string, any>) => PropertyKey>,
+      type: Function as PropType<(element: Item) => PropertyKey>,
       default: (e: { id: string }) => e.id
     },
     transition: {
@@ -61,7 +62,7 @@ export default defineComponent({
       return props.list.map((_, i) => wtfElement.value?.children[i]?.getBoundingClientRect().height ?? 1 << 28).map(n => Math.round(n));
     }
     // 位置表
-    const itemPosList = reactive<ItemPos[]>([]);
+    const itemPosList = reactive<Record<string, ItemPos>>({});
     // waterfall容器 高度
     const wapperHeight = ref(0);
     // waterfall容器style
@@ -73,7 +74,14 @@ export default defineComponent({
       '--offset-x': borderOffset.left,
       '--offset-y': borderOffset.top,
     }))
-    const listed = reactive<PropertyKey[]>([]);
+    const listed = reactive<Record<string, boolean>>({});
+    /**
+     * Get String Key 获取key，但是string
+     * @param item 
+     */
+    function gsk(item: Item): string {
+      return props.rowKey(item)?.toString() ?? props.list.indexOf(item).toString();
+    }
     // 计算所有item位置
     async function render() {
       if (!wtfElement.value) {
@@ -81,35 +89,34 @@ export default defineComponent({
       }
       // 列(桶)高度
       const bucketHeights: Array<number> = Array.from<number>({ length: colCount.value }).fill(0);
-      itemPosList.splice(0);
+      // itemPosList.splice(0);
       const heights = getItemHeights();
       heights.forEach((itemHeight, index) => {
         // 当前最短的列(桶)
         const minBuckIndex = bucketHeights.reduce((pv, v, i, arr) => arr[pv] > v ? i : pv, 0);
-        itemPosList[index] = ({ x: minBuckIndex, y: bucketHeights[minBuckIndex] });
+        itemPosList[gsk(props.list[index])] = ({ x: minBuckIndex, y: bucketHeights[minBuckIndex] });
         bucketHeights[minBuckIndex] += itemHeight;
       })
       wapperHeight.value = Math.max(...bucketHeights) + borderOffset.top;
       setTimeout(() => {
         props.list.forEach((e, i) => {
-          listed[i] = props.rowKey(e);
+          listed[gsk(e)] = true;
         });
       }, Math.max(20, props.transition));
     }
     // 防抖
-    const rerender = useDebounceFn(render, () => props.transition);
+    const rerender = useDebounceFn(render, () => 100);
     // 提供给子组件的重排接口
     provide("imgLoaded", rerender);
     watch([colCount, wapperWidth, () => props.list], () => {
-      nextTick().then(rerender);
+      rerender();
     }, { deep: true, immediate: false });
-    function cssPos(itemIndex: number): CssItemPos {
-      const { x, y } = itemPosList[itemIndex] ?? { x: 0, y: 9000 };
+    function cssPos(item: Item): CssItemPos {
+      const { x, y } = itemPosList[gsk(item)] ?? { x: 0, y: 9000 };
       return { '--x': x, '--y': y };
     }
-    function joined(itemIndex: number): boolean {
-      const k = props.rowKey(props.list[itemIndex]);
-      return listed[itemIndex] === k || listed.includes(k);
+    function joined(item: Item): boolean {
+      return listed[gsk(item)] === true;
     }
     return { wtfElement, wtfCss, cssPos, joined }
   }
@@ -118,7 +125,7 @@ export default defineComponent({
 <template>
   <div class="waterfall-list" :style="wtfCss" ref="wtfElement">
     <div v-for="(item, index) in list" class="waterfall-item" :class="[animate]"
-      :before-render="joined(index) ? void 0 : true" :key="rowKey(item) ?? item.id" :style="cssPos(index)">
+      :before-render="joined(item) ? void 0 : true" :key="rowKey(item) ?? index" :style="cssPos(item)">
       <slot :="{ item, index }"></slot>
     </div>
   </div>
