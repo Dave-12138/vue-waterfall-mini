@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { reactive, } from 'vue';
+import { reactive } from 'vue';
 import { Waterfall } from './main';
 import BSInput from './components/BSInput.vue';
 const c = Array.from<string>("0123456789ABCDEF")
 const d = () => c[(c.length * Math.random()) | 0]
-const _createItem = () => ({ id: crypto.randomUUID(), h: 3 + (Math.random() * 30) | 0, c: '#' + d() + d() + d() });
+const _createItem = () => ({ id: crypto.randomUUID(), h: (3 + (Math.random() * 30) | 0) + 'rem', c: '#' + d() + d() + d() });
 const createItem = () => {
     const e = _createItem();
     try {
@@ -91,7 +91,7 @@ const settings = reactive({
     <div class=" container">
         <Waterfall :list="list" #="{ item, index }" :="props" :style="{ ...settings.style }">
             <div class="my-item" @click="list.splice(index, 1)" :style="{ backgroundColor: item.c }">
-                <div :style="{ height: item.h + 'rem' }">
+                <div :style="{ height: item.h }">
                     <div>{{ item[settings.key1] }}</div>
                     <div v-html="item[settings.key2]"></div>
                 </div>
