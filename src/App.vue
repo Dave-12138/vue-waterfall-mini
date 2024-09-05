@@ -52,7 +52,7 @@ const settings = reactive({
 </script>
 <template>
     <div class="container">
-        <div class="m-5">
+        <div class="my-3">
             <div class="alert alert-success">Waterfall props</div>
             <BSInput type="number" min="0" step="1" v-model="props.transition">transition</BSInput>
             <BSInput type="number" min="0" step="1" v-model="props.joinDuration">join-duration</BSInput>
@@ -65,7 +65,7 @@ const settings = reactive({
             <BSInput type="function" v-model="props.breakPoint">breakPoint</BSInput>
             <BSInput type="function" v-model="props.rowKey">rowKey</BSInput>
         </div>
-        <div class="m-5">
+        <div class="my-3">
             <div class="alert alert-warning">演示工具</div>
             <BSInput type="text" :value="JSON.stringify(list[0])" disabled>list[0]</BSInput>
             <BSInput type="function" v-model="settings.itemModify">你可以调整演示item对象</BSInput>

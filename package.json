@@ -1,6 +1,6 @@
 {
   "name": "vue-waterfall-mini",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "author": {
     "name": "Dave_12138",
     "email": "dave-12138@outlook.com",
@@ -53,7 +53,9 @@
     "typescript": "~5.4.5",
     "vite": "^5.4.2",
     "vitest": "^2.0.5",
-    "vue": "^3.4.38",
     "vue-tsc": "^2.1.4"
+  },
+  "dependencies": {
+    "vue": "^3.4.38"
   }
 }

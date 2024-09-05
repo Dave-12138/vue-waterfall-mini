@@ -1,6 +1,6 @@
 <script lang="ts">
 import { computed, defineComponent, provide, reactive, ref, watch } from 'vue';
-import type { PropType } from 'vue';
+import type { PropType, CSSProperties } from 'vue';
 import { useDebounceFn, useResizeObserver } from "@vueuse/core";
 type ColCount = number;
 /**
@@ -11,9 +11,11 @@ interface ItemPos {
   x: number;
   y: number;
 }
-interface CssItemPos extends Record<string, number> {
-  '--x': number;
-  '--y': number;
+function toCss(obj: Record<string, any>, forceCustomName: boolean = false): CSSProperties {
+  const prevReg = forceCustomName ? /^([A-Za-z])/ : /^([A-Z])/;
+  return Object.keys(obj)
+    .map((k) => ({ [k.replace(prevReg, "--$1").replace(/\B([A-Z])/g, "-$1").toLowerCase()]: obj[k] }))
+    .reduce((o, p) => Object.assign(o, p), {})
 }
 type Item = Record<string, any>;
 export default defineComponent({
@@ -46,11 +48,11 @@ export default defineComponent({
   setup(props) {
     const wtfElement = ref<HTMLDivElement | null>(null);
     const wapperWidth = ref<number>(0);
-    const borderOffset = reactive({ left: 0, top: 0, });
+    const borderOffset = reactive({ OffsetX: 0, OffsetY: 0, });
     useResizeObserver(wtfElement, ([entry]) => {
       const { width, top, left } = entry.contentRect;
-      borderOffset.left = left;
-      borderOffset.top = top;
+      borderOffset.OffsetX = left;
+      borderOffset.OffsetY = top;
       wapperWidth.value = width;
     })
     // 有几列(桶)
@@ -66,13 +68,14 @@ export default defineComponent({
     // waterfall容器 高度
     const wapperHeight = ref(0);
     // waterfall容器style
-    const wtfCss = computed(() => ({
+    const wtfCss = computed<CSSProperties>(() => ({
       height: `${wapperHeight.value}px`,
-      '--item-width': itemFlexWidth.value,
-      '--transition': props.transition,
-      '--join-duration': props.joinDuration,
-      '--offset-x': borderOffset.left,
-      '--offset-y': borderOffset.top,
+      ...toCss({
+        ItemWidth: itemFlexWidth.value,
+        Transition: props.transition,
+        JoinDuration: props.joinDuration,
+        ...borderOffset
+      }),
     }))
     const listed = reactive<Record<string, boolean>>({});
     /**
@@ -88,7 +91,7 @@ export default defineComponent({
         return;
       }
       // 列(桶)高度
-      const bucketHeights: Array<number> = Array.from<number>({ length: colCount.value }).fill(0);
+      const bucketHeights = Array.from<number>({ length: colCount.value }).fill(0);
       // itemPosList.splice(0);
       const heights = getItemHeights();
       heights.forEach((itemHeight, index) => {
@@ -97,7 +100,7 @@ export default defineComponent({
         itemPosList[gsk(props.list[index])] = ({ x: minBuckIndex, y: bucketHeights[minBuckIndex] });
         bucketHeights[minBuckIndex] += itemHeight;
       })
-      wapperHeight.value = Math.max(...bucketHeights) + borderOffset.top;
+      wapperHeight.value = Math.max(...bucketHeights) + borderOffset.OffsetY;
       setTimeout(() => {
         props.list.forEach((e, i) => {
           listed[gsk(e)] = true;
@@ -111,9 +114,9 @@ export default defineComponent({
     watch([colCount, wapperWidth, () => props.list], () => {
       rerender();
     }, { deep: true, immediate: false });
-    function cssPos(item: Item): CssItemPos {
+    function cssPos(item: Item): CSSProperties {
       const { x, y } = itemPosList[gsk(item)] ?? { x: 0, y: 9000 };
-      return { '--x': x, '--y': y };
+      return toCss({ x, y }, true);
     }
     function joined(item: Item): boolean {
       return listed[gsk(item)] === true;
@@ -132,7 +135,7 @@ export default defineComponent({
 </template>
 <style lang="less">
 :root {
-  --item-width: 200;
+  --item-width: 0;
   --x: 0;
   --y: 9000;
   --transition: 300;
@@ -140,16 +143,16 @@ export default defineComponent({
 }
 
 .waterfall-list {
-  position: relative;
+  position: relative !important;
   overflow: hidden;
-  width: 100%;
+  // width: 100%;
 
   --transition-ms: calc(var(--transition) * 1ms);
   --join-duration-ms: calc(var(--join-duration) * 1ms);
 
   >.waterfall-item {
-    position: absolute;
-    width: calc(var(--item-width) * 1px);
+    position: absolute !important;
+    width: calc(var(--item-width) * 1px) !important;
     box-sizing: content-box !important;
 
     left: calc(calc(calc(var(--item-width) * var(--x)) + var(--offset-x)) * 1px);
