@@ -101,6 +101,18 @@ const rerender = inject("imgLoaded");
 ``` HTML
 <img src="..." @load="rerender">
 ```
+当然，考虑到您可能不想把卡片内容做成独立组件，更不想舍近求远使用`:ref="(w) => rerender = w.$.provides.rerender"`，本组件暴露了重排函数：
+
+``` HTML
+<!-- 可以用解包 ，写成  :ref="({ rerender: r }) => rerender = r" -->
+<Waterfall :list="items" #="{ item, index }" :ref="(wtf) => rerender = wtf.rerender">
+    <img src="..." @load="rerender">
+</Waterfall>
+```
+``` JavaScript
+const rerender = ref(()=>{});
+```
+
 
 ## 卡片宽度、间隙与容器边框
 

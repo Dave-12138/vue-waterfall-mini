@@ -41,7 +41,7 @@ jobs:
         with:
           # Upload entire repository
           path: 'pages/'
-    # deploy
+  # deploy
   deploy:
     environment:
       name: github-pages

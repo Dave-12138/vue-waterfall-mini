@@ -45,7 +45,7 @@ export default defineComponent({
       default: "fade-in"
     }
   },
-  setup(props) {
+  setup(props, { expose }) {
     const wtfElement = ref<HTMLDivElement | null>(null);
     const wapperWidth = ref<number>(0);
     const borderOffset = reactive({ OffsetX: 0, OffsetY: 0, });
@@ -86,8 +86,8 @@ export default defineComponent({
       return props.rowKey(item)?.toString() ?? props.list.indexOf(item).toString();
     }
     // 计算所有item位置
-    async function render() {
-      if (!wtfElement.value) {
+    function render() {
+      if (!wapperWidth.value) {
         return;
       }
       // 列(桶)高度
@@ -99,7 +99,7 @@ export default defineComponent({
         const minBuckIndex = bucketHeights.reduce((pv, v, i, arr) => arr[pv] > v ? i : pv, 0);
         itemPosList[gsk(props.list[index])] = ({ x: minBuckIndex, y: bucketHeights[minBuckIndex] });
         bucketHeights[minBuckIndex] += itemHeight;
-      })
+      });
       wapperHeight.value = Math.max(...bucketHeights) + borderOffset.OffsetY;
       setTimeout(() => {
         props.list.forEach((e, i) => {
@@ -121,7 +121,10 @@ export default defineComponent({
     function joined(item: Item): boolean {
       return listed[gsk(item)] === true;
     }
-    return { wtfElement, wtfCss, cssPos, joined }
+    // 仅暴露重排函数
+    expose<{ rerender: () => void }>({ rerender });
+
+    return { wtfElement, wtfCss, cssPos, joined };
   }
 })
 </script>
