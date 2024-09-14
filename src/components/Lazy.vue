@@ -1,16 +1,11 @@
 <script>
-
-import { ref, onMounted, inject } from 'vue';
-function loadElement(el) {
-    el.loadme?.();
-    observer.unobserve(el);
-}
-
-const observer = new IntersectionObserver(function (entries) {
+import { ref, onMounted, inject, computed } from 'vue';
+const observer = new IntersectionObserver(function (entries, observer) {
     for (let i = 0; i < entries.length; i++) {
         const item = entries[i];
         if (item.isIntersecting) {
-            loadElement(item.target);
+            item.target.loadme?.();
+            observer.unobserve(item.target);
         }
     }
 });
@@ -32,22 +27,21 @@ export default {
             observer.observe(iref.value);
         });
         expose();
-        const beforeLoadStyles = {
+        const styles = computed(() => loading.value == 2 ? {} : {
             backgroundImage: "var(--loading)",
             backgroundRepeat: "no-repeat",
             backgroundPosition: "center",
             width: "100%",
             height: 0,
             paddingBottom: "75%"
-        }
-        return { iref, onload, loading, beforeLoadStyles };
+        })
+        return { iref, onload, loading, styles };
     }
 }
 </script>
 <template>
-    <img v-if="loading" v-bind="$attrs" :class="{ loading: loading != 2 }"
-        :style="[loading != 2 ? beforeLoadStyles : {}]" :src="src" @load="onload">
-    <div v-else v-bind="$attrs" :style="beforeLoadStyles" class="before-lazy" ref="iref"></div>
+    <img v-if="loading" v-bind="$attrs" :class="{ loading: loading != 2 }" :style="styles" :src="src" @load="onload">
+    <div v-else v-bind="$attrs" :style="styles" class="before-lazy" ref="iref"></div>
 </template>
 <style>
 :root {
