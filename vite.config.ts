@@ -34,6 +34,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/js/vue-accordion.js': 'https://dave-12138.cn'
-    }
+    },
+    open: true
   }
 })

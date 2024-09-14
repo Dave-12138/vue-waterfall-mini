@@ -2,9 +2,16 @@
 import { reactive } from 'vue';
 import { Waterfall } from './main';
 import BSInput from './components/BSInput.vue';
+import { getRandImg } from './random-img';
+import Lazy from './components/Lazy.vue';
 const c = Array.from<string>("0123456789ABCDEF")
+function sleep(ms: number = 1000) {
+    return new Promise<void>(r => {
+        setTimeout(() => r(), ms);
+    });
+}
 const d = () => c[(c.length * Math.random()) | 0]
-const _createItem = () => ({ id: crypto.randomUUID(), h: (3 + (Math.random() * 30) | 0) + 'rem', c: '#' + d() + d() + d() });
+const _createItem = () => ({ id: crypto.randomUUID(), h: (3 + (Math.random() * 30) | 0) + 'rem', c: '#' + d() + d() + d(), src: getRandImg(), v: d() });
 const createItem = () => {
     const e = _createItem();
     try {
@@ -12,32 +19,16 @@ const createItem = () => {
     } catch (_) { }
     return e;
 }
-const list = reactive<Record<string, any>[]>([...Array.from({ length: 6 }).map(createItem)]);
-async function push(count: number = 1) {
-    list.push(...Array.from({ length: Math.floor(count) }).map(createItem));
-    await sleep(3000);
-}
-function sleep(ms: number = 1000) {
-    return new Promise<void>(r => {
-        setTimeout(() => r(), ms);
-    });
-}
-sleep().then(async () => {
-    while (true) {
-        if (list.length < settings.maxCount) push(Math.random() * (settings.maxAdd - settings.minAdd) + settings.minAdd);
-        await sleep(settings.addDelay);
-    }
-});
 const props = reactive({
     transition: 300,
     joinDuration: 1000,
     animate: 'fade-in',
-    breakPoint: (x: number) => Math.floor(x / 200),
-    rowKey: (f: Record<string, any>) => f.id
+    breakPoint: (x: number) => Math.floor(x / 300),
+    rowKey: (f: Record<string, any>) => f.id,
 });
 const settings = reactive({
-    itemModify: (e: any) => { },
-    key1: "h",
+    itemModify: (e: any) => delete e.src,
+    key1: "v",
     key2: "c",
     addDelay: 3000,
     minAdd: 1,
@@ -47,6 +38,17 @@ const settings = reactive({
         padding: "3rem",
         backgroundColor: "rgb(52, 66, 66)",
         boxSizing: "border-box"
+    },
+});
+const list = reactive<Record<string, any>[]>([...Array.from({ length: 6 }).map(createItem)]);
+async function push(count: number = 1) {
+    list.push(...Array.from({ length: Math.floor(count) }).map(createItem));
+    await sleep(3000);
+}
+sleep().then(async () => {
+    while (true) {
+        if (list.length < settings.maxCount) push(Math.random() * (settings.maxAdd - settings.minAdd) + settings.minAdd);
+        await sleep(settings.addDelay);
     }
 });
 </script>
@@ -66,9 +68,13 @@ const settings = reactive({
             <BSInput type="function" v-model="props.rowKey">rowKey</BSInput>
         </div>
         <div class="my-3">
-            <div class="alert alert-warning">演示工具</div>
+            <div class="alert alert-warning">演示工具 你可以点击卡片将它删除</div>
             <BSInput type="text" :value="JSON.stringify(list[0])" disabled>list[0]</BSInput>
-            <BSInput type="function" v-model="settings.itemModify">你可以调整演示item对象</BSInput>
+            <BSInput type="function" v-model="settings.itemModify" list="item-mod">修改刚创建的对象</BSInput>
+            <datalist id="item-mod">
+                <option value="e=>delete e.src"></option>
+                <option value="e=>e.h='4rem'"></option>
+            </datalist>
             <BSInput type="text" v-model="settings.key1">item上的文字(大)</BSInput>
             <BSInput type="text" v-model="settings.key2">item上的文字(小，可以是html)</BSInput>
             <div class="input-group">
@@ -88,9 +94,10 @@ const settings = reactive({
         </div>
 
     </div>
-    <div class=" container">
-        <Waterfall :list="list" #="{ item, index }" :="props" :style="{ ...settings.style }">
+    <div class=" container-xl">
+        <Waterfall :list="list" #="{ item, index }" :="props" :style="settings.style">
             <div class="my-item" @click="list.splice(index, 1)" :style="{ backgroundColor: item.c }">
+                <Lazy v-if="item.src" :src="item.src" alt=""></Lazy>
                 <div :style="{ height: item.h }">
                     <div>{{ item[settings.key1] }}</div>
                     <div v-html="item[settings.key2]"></div>
@@ -118,6 +125,10 @@ const settings = reactive({
     border-radius: 1.5rem;
     overflow: hidden;
     margin: .5rem;
+
+    >img {
+        width: 100%;
+    }
 
     >div {
         // background-color: brown;
@@ -156,7 +167,7 @@ const settings = reactive({
     }
 }
 
-:deep(.fade-rotate:not([before-render])) {
+.container-xl:deep(.fade-rotate:not([before-render])) {
     animation-name: fade-rotate;
 }
 </style>
