@@ -37,7 +37,7 @@ jobs:
       - run: npm i
       - name: 编译 package
         run: npm run build
-      - name: publish
+      - name: 发布到npmjs
         env:
           NPM_TPKEN: ${{ secrets.NPM_TOKEN }}
         if: ${{ env.NPM_TPKEN != '' }}

@@ -116,7 +116,7 @@ defineExpose<{ rerender: () => void }>({ rerender });
 <template>
   <div class="waterfall-list" :style="wtfCss" ref="wtfElement">
     <div v-for="(item, index) in list" class="waterfall-item" :class="[animate]"
-      :before-render="joined(item) ? void 0 : true" :key="rowKey(item) ?? index" :style="cssPos(item)">
+      :before-render="!joined(item) || void 0" :key="rowKey(item) ?? index" :style="cssPos(item)">
       <slot :="{ item, index }"></slot>
     </div>
   </div>
