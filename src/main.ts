@@ -1,3 +1,4 @@
-import Waterfall from "./components/Waterfall.vue"
+import Waterfall from "./components/Waterfall.vue";
 
-export { Waterfall }
+export { Waterfall };
+export default Waterfall;
