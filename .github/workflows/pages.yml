@@ -35,16 +35,6 @@ jobs:
         with:
           node-version: 20
       - run: npm i
-      - name: 编译 package
-        run: npm run build
-      - name: 发布到npmjs
-        env:
-          NPM_TPKEN: ${{ secrets.NPM_TOKEN }}
-        if: ${{ env.NPM_TPKEN != '' }}
-        run: |
-         npm config set //registry.npmjs.org/:_authToken ${{ secrets.NPM_TOKEN }} 
-         npm publish
-        continue-on-error: true
       - name: 编译 pages
         run: npm run build-only:example
       - name: Upload artifact
