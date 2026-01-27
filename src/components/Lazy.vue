@@ -1,18 +1,26 @@
-<script>
+<script >
 import { ref, onMounted, inject, computed } from 'vue';
+/**@type {WeakMap<Element,()=>void>} */
+const loadmeMap = new WeakMap();
 const observer = new IntersectionObserver(function (entries, observer) {
     for (let i = 0; i < entries.length; i++) {
         const item = entries[i];
         if (item.isIntersecting) {
-            item.target.loadme?.();
+            loadmeMap.get(item.target)?.();
             observer.unobserve(item.target);
         }
     }
 });
 export default {
-    props: ['src'],
+    props: {
+        src: {
+            type: String
+        }
+    },
+    // 用于 Custom Element
+    styles: [`img{width:100%;height:100%}.loading,.before-lazy{min-width:10rem;}`],
     setup(props, { expose }) {
-        const iref = ref(null);
+        const iref = ref(/**@type {HTMLDivElement|null}*/(null));
         const imgLoaded = inject('imgLoaded');
         const loading = ref(0);
         function loadme() {
@@ -23,8 +31,10 @@ export default {
             loading.value = 2;
         }
         onMounted(() => {
-            iref.value.loadme = loadme;
-            observer.observe(iref.value);
+            if (iref.value) {
+                loadmeMap.set(iref.value, loadme);
+                observer.observe(iref.value);
+            }
         });
         expose();
         const styles = computed(() => loading.value == 2 ? {} : {

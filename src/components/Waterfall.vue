@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, provide, reactive, ref, watch } from 'vue';
+import { computed, provide, reactive, ref, useTemplateRef, watch } from 'vue';
 import type { CSSProperties } from 'vue';
 import { useDebounceFn, useResizeObserver } from "@vueuse/core";
 type ColCount = number;
@@ -34,13 +34,13 @@ const props = withDefaults(defineProps<Props>(), {
   joinDuration: 300,
   animate: "fade-in"
 });
-const wtfElement = ref<HTMLDivElement | null>(null);
+const wtfElement = useTemplateRef('wtfElement');
 const wapperWidth = ref<number>(0);
-const borderOffset = reactive({ OffsetX: 0, OffsetY: 0, });
+const borderOffset = reactive({ WtfOffsetX: 0, WtfOffsetY: 0, });
 useResizeObserver(wtfElement, ([entry]) => {
   const { width, top, left } = entry.contentRect;
-  borderOffset.OffsetX = left;
-  borderOffset.OffsetY = top;
+  borderOffset.WtfOffsetX = left;
+  borderOffset.WtfOffsetY = top;
   wapperWidth.value = width;
 })
 // 有几列(桶)
@@ -52,27 +52,20 @@ function getItemHeights() {
   return props.list.map((_, i) => wtfElement.value?.children[i]?.getBoundingClientRect().height ?? 1 << 28).map(n => Math.round(n));
 }
 // 位置表
-const itemPosList = reactive<Record<string, ItemPos>>({});
+const itemPosList = reactive<WeakMap<Item, ItemPos>>(new WeakMap());
 // waterfall容器 高度
 const wapperHeight = ref(0);
 // waterfall容器style
 const wtfCss = computed<CSSProperties>(() => ({
   height: `${wapperHeight.value}px`,
   ...toCss({
-    ItemWidth: itemFlexWidth.value,
-    Transition: props.transition,
-    JoinDuration: props.joinDuration,
+    WtfItemWidth: itemFlexWidth.value,
+    WtfTransition: props.transition,
+    WtfJoinDuration: props.joinDuration,
     ...borderOffset
   }),
 }))
-const listed = reactive<Record<string, boolean>>({});
-/**
- * Get String Key 获取key，但是string
- * @param item 
- */
-function gsk(item: Item): string {
-  return props.rowKey(item)?.toString() ?? props.list.indexOf(item).toString();
-}
+const listed = reactive<WeakSet<Item>>(new WeakSet());
 // 计算所有item位置
 function render() {
   if (!wapperWidth.value) {
@@ -85,13 +78,13 @@ function render() {
   heights.forEach((itemHeight, index) => {
     // 当前最短的列(桶)
     const minBuckIndex = bucketHeights.reduce((pv, v, i, arr) => arr[pv] > v ? i : pv, 0);
-    itemPosList[gsk(props.list[index])] = ({ x: minBuckIndex, y: bucketHeights[minBuckIndex] });
+    itemPosList.set(props.list[index], { x: minBuckIndex, y: bucketHeights[minBuckIndex] })
     bucketHeights[minBuckIndex] += itemHeight;
   });
-  wapperHeight.value = Math.max(...bucketHeights) + borderOffset.OffsetY;
+  wapperHeight.value = Math.max(...bucketHeights) + borderOffset.WtfOffsetY;
   setTimeout(() => {
     props.list.forEach((e, i) => {
-      listed[gsk(e)] = true;
+      listed.add(e);
     });
   }, Math.max(20, props.transition));
 }
@@ -103,11 +96,11 @@ watch([colCount, wapperWidth, () => props.list], () => {
   rerender();
 }, { deep: true, immediate: false });
 function cssPos(item: Item): CSSProperties {
-  const { x, y } = itemPosList[gsk(item)] ?? { x: 0, y: 9000 };
-  return toCss({ x, y }, true);
+  const { x, y } = itemPosList.get(item) ?? { x: 0, y: 9000 };
+  return toCss({ WtfX: x, WtfY: y });
 }
 function joined(item: Item): boolean {
-  return listed[gsk(item)] === true;
+  return listed.has(item);
 }
 // 仅暴露重排函数
 defineExpose<{ rerender: () => void }>({ rerender });
@@ -123,11 +116,11 @@ defineExpose<{ rerender: () => void }>({ rerender });
 </template>
 <style lang="less">
 :root {
-  --item-width: 0;
-  --x: 0;
-  --y: 9000;
-  --transition: 300;
-  --join-duration: 1000;
+  --wtf-item-width: 0;
+  --wtf-x: 0;
+  --wtf-y: 9000;
+  --wtf-transition: 300;
+  --wtf-join-duration: 1000;
 }
 
 .waterfall-list {
@@ -135,16 +128,16 @@ defineExpose<{ rerender: () => void }>({ rerender });
   overflow: hidden;
   // width: 100%;
 
-  --transition-ms: calc(var(--transition) * 1ms);
-  --join-duration-ms: calc(var(--join-duration) * 1ms);
+  --transition-ms: calc(var(--wtf-transition) * 1ms);
+  --join-duration-ms: calc(var(--wtf-join-duration) * 1ms);
 
   >.waterfall-item {
     position: absolute !important;
-    width: calc(var(--item-width) * 1px) !important;
+    width: calc(var(--wtf-item-width) * 1px) !important;
     box-sizing: content-box !important;
 
-    left: calc(calc(calc(var(--item-width) * var(--x)) + var(--offset-x)) * 1px);
-    top: calc(calc(var(--y) + var(--offset-y)) * 1px);
+    left: calc(calc(calc(var(--wtf-item-width) * var(--wtf-x)) + var(--wtf-offset-x)) * 1px);
+    top: calc(calc(var(--wtf-y) + var(--wtf-offset-y)) * 1px);
 
     animation-duration: var(--join-duration-ms);
 
