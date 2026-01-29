@@ -4,14 +4,20 @@ import { Waterfall } from './main';
 import BSInput from './components/BSInput.vue';
 import { getRandImg } from './random-img';
 import Lazy from './components/Lazy.vue';
-const c = Array.from<string>("0123456789ABCDEF")
+const c = Array.from<string>("0123456789ABCDEF");
+const d = () => c[(c.length * Math.random()) | 0];
 function sleep(ms: number = 1000) {
     return new Promise<void>(r => {
         setTimeout(() => r(), ms);
     });
 }
-const d = () => c[(c.length * Math.random()) | 0]
-const _createItem = () => ({ id: crypto.randomUUID(), h: (3 + (Math.random() * 30) | 0) + 'rem', c: '#' + d() + d() + d(), src: getRandImg(), v: d() });
+const _createItem = () => ({
+    id: crypto.randomUUID(),
+    h: (3 + (Math.random() * 30) | 0) + 'rem',
+    c: '#' + d() + d() + d(),
+    src: getRandImg(),
+    v: d()
+});
 const createItem = () => {
     const e = _createItem();
     try {
@@ -70,11 +76,28 @@ sleep().then(async () => {
         <div class="my-3">
             <div class="alert alert-warning">演示工具 你可以点击卡片将它删除</div>
             <BSInput type="text" :value="JSON.stringify(list[0])" disabled>list[0]</BSInput>
-            <BSInput type="function" v-model="settings.itemModify" list="item-mod">修改刚创建的对象</BSInput>
+            <pre><code>
+            function createItem(){
+                const c = Array.from("0123456789ABCDEF");
+                const d = () => c[(c.length * Math.random()) | 0];
+                const e = {
+                    id: crypto.randomUUID(),
+                    h: (3 + (Math.random() * 30) | 0) + 'rem',
+                    c: '#' + d() + d() + d(),
+                    src: getRandImg(),
+                    v: d()
+                }
+            </code></pre>
+            <BSInput type="function" v-model="settings.itemModify" list="item-mod">const f = </BSInput>
             <datalist id="item-mod">
                 <option value="e=>delete e.src"></option>
                 <option value="e=>e.h='4rem'"></option>
             </datalist>
+            <pre><code>
+                f(e);
+                return e;
+            }
+            </code></pre>
             <BSInput type="text" v-model="settings.key1">item上的文字(大)</BSInput>
             <BSInput type="text" v-model="settings.key2">item上的文字(小，可以是html)</BSInput>
             <div class="input-group">
