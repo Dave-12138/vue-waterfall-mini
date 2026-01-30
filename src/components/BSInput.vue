@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { computed } from 'vue';
-const props = defineProps({ id: String, type: String, value: {} });
+import EmptyComp from './EmptyComp';
+const props = defineProps({ id: String, type: String, value: {}, noGroup: Boolean });
 const id = computed(() => props.id || 'input' + crypto.randomUUID());
 const value = defineModel<Function | any>();
 const isFunc = computed(() => props.type === 'function');
@@ -18,11 +19,11 @@ const text = computed({
 });
 </script>
 <template>
-    <div class="input-group">
+    <component :is="noGroup ? EmptyComp : 'div'" class="input-group">
         <label :for="id" class="input-group-text">
             <slot :id="id"></slot>
         </label>
         <input v-if="isFunc || noModel" :type="type" :="$attrs" :id="id" class="form-control" v-model.lazy="text">
         <input v-else :type="type" :="$attrs" :id="id" class="form-control" v-model="value">
-    </div>
+    </component>
 </template>

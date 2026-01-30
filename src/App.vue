@@ -57,6 +57,21 @@ sleep().then(async () => {
         await sleep(settings.addDelay);
     }
 });
+const createItemScriptText = `
+function createItem(){
+    const c = Array.from("0123456789ABCDEF");
+    const d = () => c[(c.length * Math.random()) | 0];
+    const e = {
+        id: crypto.randomUUID(),
+        h: (3 + (Math.random() * 30) | 0) + 'rem',
+        c: '#' + d() + d() + d(),
+        src: getRandImg(),
+        v: d()
+    }
+/**split*/
+    f(e);
+    return e;
+}`.split('/**split*/');
 </script>
 <template>
     <div class="container">
@@ -76,35 +91,20 @@ sleep().then(async () => {
         <div class="my-3">
             <div class="alert alert-warning">演示工具 你可以点击卡片将它删除</div>
             <BSInput type="text" :value="JSON.stringify(list[0])" disabled>list[0]</BSInput>
-            <pre><code>
-            function createItem(){
-                const c = Array.from("0123456789ABCDEF");
-                const d = () => c[(c.length * Math.random()) | 0];
-                const e = {
-                    id: crypto.randomUUID(),
-                    h: (3 + (Math.random() * 30) | 0) + 'rem',
-                    c: '#' + d() + d() + d(),
-                    src: getRandImg(),
-                    v: d()
-                }
-            </code></pre>
+            <pre><code v-html="createItemScriptText[0]"></code></pre>
             <BSInput type="function" v-model="settings.itemModify" list="item-mod">const f = </BSInput>
             <datalist id="item-mod">
                 <option value="e=>delete e.src"></option>
                 <option value="e=>e.h='4rem'"></option>
             </datalist>
-            <pre><code>
-                f(e);
-                return e;
-            }
-            </code></pre>
+            <pre><code v-html="createItemScriptText[1]"></code></pre>
             <BSInput type="text" v-model="settings.key1">item上的文字(大)</BSInput>
             <BSInput type="text" v-model="settings.key2">item上的文字(小，可以是html)</BSInput>
             <div class="input-group">
-                <BSInput type="number" min="0" step="1" v-model="settings.addDelay">每</BSInput>
-                <BSInput type="number" min="0" step="1" v-model="settings.minAdd">毫秒增加</BSInput>
-                <BSInput type="number" min="0" step="1" v-model="settings.maxAdd">~</BSInput>
-                <BSInput type="number" min="0" step="1" v-model="settings.maxCount">个新元素，直到个数达到</BSInput>
+                <BSInput :no-group="true" type="number" min="0" step="1" v-model="settings.addDelay">每</BSInput>
+                <BSInput :no-group="true" type="number" min="0" step="1" v-model="settings.minAdd">毫秒增加</BSInput>
+                <BSInput :no-group="true" type="number" min="0" step="1" v-model="settings.maxAdd">~</BSInput>
+                <BSInput :no-group="true" type="number" min="0" step="1" v-model="settings.maxCount">个新元素，直到个数达到</BSInput>
             </div>
             <button class="btn btn-outline-danger" @click="list.splice(0)">清空item</button>
             <BSInput type="text" v-model="settings.style.padding">padding</BSInput>
