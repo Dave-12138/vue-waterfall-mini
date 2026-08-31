@@ -2,9 +2,8 @@
   "include": ["env.d.ts", "src/**/main.ts", "src/**/Waterfall.vue"],
   "compilerOptions": {
     "types": ["vitest/importMeta"],
-    "baseUrl": ".",
     "declaration": true,
-    "outDir": "dist",
+    "declarationDir": "./dist/types",
     "module": "ESNext",
     "target": "es2016",
     "lib": ["DOM", "ESNext"],
@@ -12,12 +11,11 @@
     "esModuleInterop": true,
     "incremental": false,
     "skipLibCheck": true,
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "noUnusedLocals": true,
     "strictNullChecks": true,
     "forceConsistentCasingInFileNames": true,
-    "declarationDir": "dist/types",
     "emitDeclarationOnly": true
   }
 }

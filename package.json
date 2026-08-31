@@ -1,11 +1,12 @@
 {
   "name": "vue-waterfall-mini",
-  "version": "1.1.6",
+  "version": "1.1.7",
   "author": {
     "name": "Dave_12138",
     "email": "dave-12138@outlook.com",
     "url": "https://dave-12138.cn"
   },
+  "license": "ISC",
   "keywords": ["vue", "waterfall"],
   "type": "module",
   "repository": {
@@ -17,7 +18,7 @@
   ],
   "scripts": {
     "dev": "vite",
-    "build": "pnpm type-check && pnpm build-only",
+    "build": "pnpm build-only && pnpm type-check",
     "preview": "vite preview",
     "build-only": "vite build --mode lib && terser dist/*.esm.js -c -m --module -o dist/vue-waterfall-mini.esm.min.js",
     "build-only:example": "vite build",
