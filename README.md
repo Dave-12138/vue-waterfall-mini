@@ -11,7 +11,7 @@ npm i vue-waterfall-mini
 ## 使用例
 [在线示例](https://dave-12138.github.io/vue-waterfall-mini/)
 ```javascript
-import { Waterfall } from "vue-waterfall-mini";
+import Waterfall from "vue-waterfall-mini";
 import "vue-waterfall-mini/style";
 export default {
     components: {

@@ -17,8 +17,7 @@ coverage
 
 /cypress/videos/
 /cypress/screenshots/
-# lock
-*npm*lock*
+
 
 # Editor directories and files
 .vscode/*

@@ -34,9 +34,13 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-      - run: npm i
+          cache: pnpm
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11
+      - run: pnpm install --frozen-lockfile
       - name: 编译 pages
-        run: npm run build-only:example
+        run: pnpm run build-only:example
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

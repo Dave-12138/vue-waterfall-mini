@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { reactive } from 'vue';
-import { Waterfall } from './main';
+import Waterfall from './main';
 import BSInput from './components/BSInput.vue';
 import { getRandImg } from './random-img';
 import Lazy from './components/Lazy.vue';

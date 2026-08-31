@@ -20,9 +20,13 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-      - run: npm i
+          cache: pnpm
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11
+      - run: pnpm install --frozen-lockfile
       - name: 编译 package
-        run: npm run build
+        run: pnpm run build
       - name: 发布到npmjs
         env:
           NPM_TPKEN: ${{ secrets.NPM_TOKEN }}
