@@ -6,6 +6,7 @@
     "email": "dave-12138@outlook.com",
     "url": "https://dave-12138.cn"
   },
+  "keywords": ["vue", "waterfall"],
   "type": "module",
   "repository": {
     "type": "git",

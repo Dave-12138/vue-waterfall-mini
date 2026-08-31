@@ -27,19 +27,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
       - name: 配置pages
-        uses: actions/configure-pages@v5
-      - uses: pnpm/setup@v2
+        uses: actions/configure-pages@v6
+      - name: 安装 pnpm 与 Node.js
+        uses: pnpm/setup@v2
         with:
           version: 11
-          runtime: node@20
+          runtime: node@24
           cache: true
           require-lockfile: true
       - name: 编译 pages
         run: pnpm run build-only:example
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v5
         with:
           # Upload entire repository
           path: 'pages/'
@@ -53,4 +54,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
