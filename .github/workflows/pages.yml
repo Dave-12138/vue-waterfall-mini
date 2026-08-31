@@ -30,15 +30,12 @@ jobs:
         uses: actions/checkout@v4
       - name: 配置pages
         uses: actions/configure-pages@v5
-      - name: Use Node.js 
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: pnpm
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/setup@v2
         with:
           version: 11
-      - run: pnpm install --frozen-lockfile
+          runtime: node@20
+          cache: true
+          require-lockfile: true
       - name: 编译 pages
         run: pnpm run build-only:example
       - name: Upload artifact
